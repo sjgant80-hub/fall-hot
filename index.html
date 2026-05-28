@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>fall-hot · ◊ hot-load plugin updates without redeploying</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#06070b; --surface:#0c0e14; --surface-2:#11141d; --border:#1f2330;
+  --ink:#b8bfca; --dim:#6b7280; --bright:#f0f3f7;
+  --gold:#d4a853; --accent:#c8371a; --ok:#4ecba0;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Syne',system-ui,sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; line-height:1.55; }
+code, pre, .mono { font-family:'DM Mono',ui-monospace,monospace; }
+
+header { padding:60px 24px 40px; text-align:center; border-bottom:1px solid var(--border); background:linear-gradient(180deg, rgba(78,203,160,0.04), transparent); }
+header .glyph { font-size:32px; color:var(--ok); display:block; margin-bottom:12px; }
+header h1 { font-size:38px; font-weight:800; color:var(--bright); letter-spacing:-0.02em; margin-bottom:10px; }
+header p { color:var(--dim); font-size:14px; font-family:'DM Mono',monospace; letter-spacing:0.05em; }
+
+main { max-width:880px; margin:0 auto; padding:40px 24px 80px; }
+section { margin-bottom:36px; }
+section h2 { font-size:11px; color:var(--dim); letter-spacing:0.12em; text-transform:uppercase; font-family:'DM Mono',monospace; margin-bottom:14px; font-weight:700; }
+
+pre { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:16px 18px; overflow-x:auto; font-size:12px; color:var(--ink); line-height:1.6; margin-bottom:12px; }
+code.inline { background:var(--surface-2); padding:1px 5px; border-radius:3px; font-size:0.92em; color:var(--ok); }
+
+ul { padding-left:22px; margin-bottom:16px; }
+li { margin-bottom:6px; }
+
+.feature-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-bottom:32px; }
+.feature { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:16px 18px; }
+.feature .icon { color:var(--ok); font-family:'DM Mono',monospace; font-size:18px; margin-bottom:6px; }
+.feature h3 { font-size:14px; color:var(--bright); margin-bottom:4px; font-weight:700; }
+.feature p { font-size:12px; color:var(--dim); }
+
+.demo { background:var(--surface); border:1px solid var(--ok); border-radius:10px; padding:20px; margin-bottom:32px; }
+.demo .row { display:flex; gap:10px; align-items:center; margin-bottom:10px; flex-wrap:wrap; }
+.demo button { background:var(--ok); color:#000; border:none; padding:8px 14px; border-radius:5px; font-weight:700; cursor:pointer; font-family:inherit; font-size:12px; }
+.demo button.sec { background:var(--surface-2); color:var(--bright); border:1px solid var(--border); font-weight:400; }
+.demo pre { margin-top:10px; font-size:11px; max-height:240px; overflow-y:auto; }
+
+footer { padding:24px; text-align:center; color:var(--dim); font-size:11px; font-family:'DM Mono',monospace; border-top:1px solid var(--border); letter-spacing:0.06em; }
+footer a { color:var(--ok); text-decoration:none; }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="glyph">◊</span>
+  <h1>fall-hot</h1>
+  <p>hot-load plugin updates without redeploying · the HTML serves itself new code</p>
+</header>
+
+<main>
+
+  <section>
+    <h2>What it does</h2>
+    <div class="feature-grid">
+      <div class="feature">
+        <div class="icon">◊</div>
+        <h3>Live updates</h3>
+        <p>Periodically polls watched URLs · diffs by hash · re-runs new code in global scope. The user keeps working.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">⇋</div>
+        <h3>Multi-tab sync</h3>
+        <p>BroadcastChannel notifies other tabs of the same tool. They reload too. No tab drift.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">⌶</div>
+        <h3>Zero data loss</h3>
+        <p>State preserved · IndexedDB intact · the user mid-action stays mid-action. The update arrives quietly.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">○</div>
+        <h3>Sovereign</h3>
+        <p>You host the watched URLs. Watch your own repos · your CDN · your origin. No vendor lock-in.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Install · one line</h2>
+    <pre>&lt;script src="https://sjgant80-hub.github.io/fall-hot/fall-hot.js" defer&gt;&lt;/script&gt;</pre>
+  </section>
+
+  <section>
+    <h2>Register what to watch</h2>
+    <pre>window.addEventListener('fall-hot:ready', () =&gt; {
+  window.fallHot.watch([
+    { name: 'fall-palette', url: 'https://sjgant80-hub.github.io/fall-palette/fall-palette.js' },
+    { name: 'fall-bloom',   url: 'https://your-domain/bloom.js' }
+  ], { every: 5 * 60 * 1000 });   <span style="color:var(--dim)">// check every 5 min</span>
+});</pre>
+  </section>
+
+  <section>
+    <h2>Live demo</h2>
+    <div class="demo">
+      <p style="color:var(--bright);font-size:13px;margin-bottom:10px">This page registered fall-palette as a watched plugin. Open DevTools console — you'll see <code class="inline">◊ fall-hot first-loaded · fall-palette</code> on boot.</p>
+      <div class="row">
+        <button onclick="checkNow()">⟳ Force check now</button>
+        <button class="sec" onclick="showStatus()">▦ Status</button>
+        <button class="sec" onclick="stopWatch()">⏸ Stop polling</button>
+        <button class="sec" onclick="window.fallHot.start()">▶ Resume</button>
+      </div>
+      <pre id="demo-out" style="background:var(--surface-2);color:var(--ok)">click a button to see live state</pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>API</h2>
+    <pre>window.fallHot.watch(spec[], opts?)   <span style="color:var(--dim)">// register URLs to watch · {name, url, every}</span>
+window.fallHot.checkNow(name?)         <span style="color:var(--dim)">// force-check one or all</span>
+window.fallHot.stop()                  <span style="color:var(--dim)">// pause polling</span>
+window.fallHot.start()                 <span style="color:var(--dim)">// resume</span>
+window.fallHot.status()                <span style="color:var(--dim)">// state per watched URL</span>
+window.fallHot.onUpdate(cb)            <span style="color:var(--dim)">// callback on every successful reload</span></pre>
+  </section>
+
+  <section>
+    <h2>How it works</h2>
+    <ol style="padding-left:22px;font-size:13px;color:var(--ink)">
+      <li>Polls each watched URL with cache-busting query param</li>
+      <li>Hashes the response (DJB2 · fast · sufficient for change detection)</li>
+      <li>If unchanged → noop · if changed → indirect eval in global scope</li>
+      <li>The plugin's own <code class="inline">if (window.X._v &gt;= N) return</code> guard makes re-init idempotent</li>
+      <li>BroadcastChannel <code class="inline">fall-hot</code> notifies other tabs · they fetch + apply too</li>
+      <li>Subtle bottom-right toast on every successful reload (~2s, dismissible)</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Edge cases</h2>
+    <ul style="font-size:13px;color:var(--ink)">
+      <li><strong>Network blip:</strong> silent retry on next poll · errors counted on the watch record</li>
+      <li><strong>Faster than 60s:</strong> clamped · minimum poll interval is 1 min</li>
+      <li><strong>Bad code in update:</strong> caught · logged · the running tool is unaffected</li>
+      <li><strong>State migration:</strong> plugin authors should version their globals and migrate inside the init guard</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Strategic context</h2>
+    <p style="font-size:13px;color:var(--ink)">Built for the Fall sovereign tool estate · every Fall* tool loads plugins from <code class="inline">sjgant80-hub.github.io/fall-*</code> · adding fall-hot means updating the plugin updates every tool · without anyone redeploying anything · without users having to refresh · the field testifies · the seed grows · the tools listen.</p>
+    <p style="font-size:13px;color:var(--ink);margin-top:10px">When the next 5N puzzle solves and the forward-analysis surfaces a new modular filter, fall-hot pushes the new filter to every running CASSIE in <60s.</p>
+  </section>
+
+</main>
+
+<footer>
+  ◊·κ=1 · fall-hot v1.0 · MIT · part of the Fall sovereign tool estate ·
+  <a href="https://github.com/sjgant80-hub/fall-hot">source</a> ·
+  <a href="https://github.com/sjgant80-hub">estate</a>
+</footer>
+
+<script src="./fall-hot.js" defer></script>
+<script>
+  window.addEventListener('fall-hot:ready', function() {
+    window.fallHot.watch([
+      { name: 'fall-palette', url: 'https://sjgant80-hub.github.io/fall-palette/fall-palette.js', every: 60 * 1000 }
+    ]);
+  });
+
+  function checkNow() {
+    document.getElementById('demo-out').textContent = 'checking...';
+    window.fallHot.checkNow().then(results => {
+      document.getElementById('demo-out').textContent = JSON.stringify(window.fallHot.status(), null, 2);
+    });
+  }
+  function showStatus() {
+    document.getElementById('demo-out').textContent = JSON.stringify(window.fallHot.status(), null, 2);
+  }
+  function stopWatch() {
+    window.fallHot.stop();
+    document.getElementById('demo-out').textContent = 'polling stopped · click Resume to restart';
+  }
+</script>
+
+</body>
+</html>
