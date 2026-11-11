@@ -214,4 +214,4 @@ Every plugin that follows these 10 rules can be improved in production without a
 
 ## Licence
 
-MIT. Part of the Fall sovereign tool estate. ◊·κ=1
+MIT. Part of the Fall sovereign tool estate. 
